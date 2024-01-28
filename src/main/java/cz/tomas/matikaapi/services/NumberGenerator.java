@@ -3,6 +3,7 @@ package cz.tomas.matikaapi.services;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.security.SecureRandom;
 import java.util.OptionalLong;
 import java.util.Random;
 
@@ -10,7 +11,7 @@ import java.util.Random;
 @Slf4j
 public class NumberGenerator {
 
-    private Random random;
+    private SecureRandom random;
 
     /**
      * Provides a pseudo-random long. Uses {@link Random#longs(long, long)} under the hood.
@@ -33,7 +34,7 @@ public class NumberGenerator {
 
     private Random getRandom(){
         if(this.random == null){
-            this.random = new Random();
+            this.random = new SecureRandom();
         }
         return this.random;
     }
