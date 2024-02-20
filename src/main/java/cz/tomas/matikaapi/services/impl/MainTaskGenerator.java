@@ -1,9 +1,7 @@
-package cz.tomas.matikaapi.services;
+package cz.tomas.matikaapi.services.impl;
 
-import cz.tomas.matikaapi.dto.MathOperationTypes;
-import cz.tomas.matikaapi.dto.MathTask;
-import cz.tomas.matikaapi.dto.MathTaskInstructions;
-import cz.tomas.matikaapi.dto.MathTasks;
+import cz.tomas.matikaapi.dto.*;
+import cz.tomas.matikaapi.services.MathTasksGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,28 +14,28 @@ import java.util.List;
  */
 @Component
 @Slf4j
-public class AdditionGenerator implements MathTasksGenerator{
+public class MainTaskGenerator implements MathTasksGenerator {
 
     @Autowired
-    public AdditionGenerator(NumberGenerator numberGenerator) {
+    public MainTaskGenerator(NumberGenerator numberGenerator) {
         this.numberGenerator = numberGenerator;
     }
 
     NumberGenerator numberGenerator;
 
     @Override
-    public MathTasks buildAdditionTasks(int numberOfTasks, long maxAdditionResult){
+    public MathTasks buildAdditionTasks(MathTaskInstructions mathTaskInstructions){
         int counter = 0;
         List<MathTask> mathTaskList = new ArrayList<>();
-        while(counter < numberOfTasks){
-            MathTask mathTask = buildAddition(maxAdditionResult);
+        while(counter < mathTaskInstructions.getNumberOfTasks()){
+            MathTask mathTask = buildAddition(mathTaskInstructions.getFirstValue(), mathTaskInstructions.getSecondValue(), mathTaskInstructions.getMaxLimit());
             mathTaskList.add(mathTask);
             counter++;
         }
         return MathTasks.builder()
                 .mathTaskList(mathTaskList)
-                .maxResultValue(maxAdditionResult)
-                .numberOfTasks(numberOfTasks)
+                .maxResultValue(mathTaskInstructions.getMaxLimit())
+                .numberOfTasks(mathTaskInstructions.getNumberOfTasks())
                 .operationType(MathOperationTypes.ADDITION)
                 .build();
     }
@@ -60,7 +58,7 @@ public class AdditionGenerator implements MathTasksGenerator{
     @Override
     public MathTasks buildTask(MathTaskInstructions instructions) {
         return switch (instructions.getMathOperationType()) {
-            case ADDITION -> buildAdditionTasks(instructions.getNumberOfTasks(), instructions.getMaxLimit());
+            case ADDITION -> buildAdditionTasks(instructions);
             case SUBTRACTION ->
                     buildSubtractionTasks(instructions.getNumberOfTasks(), instructions.getMaxFirstValue(), instructions.getMaxSecondValue());
             case MULTIPLICATION ->
@@ -92,7 +90,7 @@ public class AdditionGenerator implements MathTasksGenerator{
     }
 
     private MathTask buildMultiplication(long maxFirstValue, long maxSecondValue, long maxResult){
-        long firstValue = numberGenerator.getRandomLong(1,maxFirstValue);
+        long firstValue = numberGenerator.getRandomLong(1, maxFirstValue);
         long secondValue = numberGenerator.getRandomLong(1, maxSecondValue);
         if (firstValue * secondValue <= maxResult){
             return MathTask.builder()
@@ -107,7 +105,7 @@ public class AdditionGenerator implements MathTasksGenerator{
     }
 
     private MathTask buildSubtraction(long maxFirstValue, long maxSecondValue){
-        long firstValue = getFirstNumber(maxFirstValue);
+        long firstValue = getFirstNumber(maxFirstValue,1 );
         long secondValue = getSecondSubtractionNumber(firstValue, maxSecondValue);
         return MathTask.builder()
                 .firstValue(firstValue)
@@ -117,9 +115,9 @@ public class AdditionGenerator implements MathTasksGenerator{
                 .build();
     }
 
-    private MathTask buildAddition(long maxAdditionResult){
-        long firstValue = getFirstNumber(maxAdditionResult);
-        long secondValue = getSecondNumber(maxAdditionResult,firstValue);
+    private MathTask buildAddition(Element firstValueElement, Element secondValueElement, long maxPermittedResult){
+        long firstValue = getFirstNumber(firstValueElement.getMaxValue(), firstValueElement.getMinValue());
+        long secondValue = getSecondNumber(maxPermittedResult,firstValue, secondValueElement);
         return MathTask.builder()
                 .firstValue(firstValue)
                 .secondValue(secondValue)
@@ -135,16 +133,16 @@ public class AdditionGenerator implements MathTasksGenerator{
         return numberGenerator.getRandomLong(1,maxSecondValue);
     }
 
-    private long getFirstNumber(long maxValue){
-        return numberGenerator.getRandomLong(1, maxValue);
+    private long getFirstNumber(long maxValue, long minValue){
+        return numberGenerator.getRandomLong(minValue, maxValue);
     }
 
-    private long getSecondNumber(long maxResult, long firstNumber){
-        long maxPermittedMaxValue = maxResult - firstNumber;
-        if(maxPermittedMaxValue == 1){
-            return 1;
+    private long getSecondNumber(long maxResult, long firstNumber, Element secondValue){
+        long secondNumber = numberGenerator.getRandomLong(secondValue.getMinValue(), secondValue.getMaxValue());
+        if ((firstNumber + secondNumber) > maxResult) {
+            return getSecondNumber(maxResult, firstNumber, secondValue);
         }
-        return numberGenerator.getRandomLong(1, maxResult - firstNumber);
+        return secondNumber;
     }
 
 

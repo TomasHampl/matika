@@ -27,4 +27,6 @@ public class MathTaskInstructions {
      * Maximum permitted value of the second number (in case of subtraction, max value we can remove from the first value)
      */
     private long maxSecondValue;
+    private Element firstValue;
+    private Element secondValue;
 }
