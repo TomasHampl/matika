@@ -1,16 +1,12 @@
 package cz.tomas.matikaapi.controller;
 
+import cz.tomas.matikaapi.TestUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.stream.Stream;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -39,14 +35,8 @@ class AdditionInputControllerTest {
 
     @Test
     void additionPostRequest() throws Exception {
-
-        Path path = Paths.get("src/test/resources/addition-post-body.json");
-        StringBuilder builder = new StringBuilder();
-        try (Stream<String> stream = Files.lines(path)){
-            stream.forEach(builder::append);
-        }
-        String fileContents = builder.toString();
-
+        TestUtil testUtil = new TestUtil();
+        String fileContents = testUtil.getFileAsString("src/test/resources/addition-post-body.json");
         mockMvc.perform(post("/post/scitani")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(fileContents))
