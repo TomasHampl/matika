@@ -30,11 +30,11 @@ public class SubtractionInputController {
     MainTaskGenerator mainTaskGenerator;
 
     @PostMapping(
-            value = "/post/deleni",
+            value = "/post/odcitani",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @Operation(
-            summary = "Returns division math assignments"
+            summary = "Returns subtraction math assignments"
     )
     @ApiResponses(
             value = {
@@ -42,7 +42,7 @@ public class SubtractionInputController {
                     @ApiResponse(responseCode = "500", description = "Error has occurred during math tasks generation")
             }
     )
-    public MathTasks createMultiplication(
+    public MathTasks createSubtractions(
             @RequestBody @Valid SubtractionRequestBody requestBody
     ) {
         MathTaskInstructions mathTaskInstructions = MathTaskInstructions.builder()

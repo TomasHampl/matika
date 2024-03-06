@@ -29,8 +29,8 @@ public class MainTaskGenerator implements MathTasksGenerator {
         List<MathTask> mathTaskList = new ArrayList<>();
         while(counter < mathTaskInstructions.getNumberOfTasks()){
             MathTask mathTask = buildAddition(mathTaskInstructions.getFirstValue(), mathTaskInstructions.getSecondValue(), mathTaskInstructions.getMaxLimit());
-            mathTaskList.add(mathTask);
-            counter++;
+                mathTaskList.add(mathTask);
+                counter++;
         }
         return MathTasks.builder()
                 .mathTaskList(mathTaskList)

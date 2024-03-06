@@ -1,0 +1,12 @@
+{
+  "firstValue": {
+    "maxValue": 50,
+    "minValue": 1
+  },
+  "secondValue": {
+    "maxValue": 40,
+    "minValue": 1
+  },
+  "tasks": 0,
+  "maxResult": 100
+}
