@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +23,7 @@ public class MainTaskGenerator implements MathTasksGenerator {
     }
 
     NumberGenerator numberGenerator;
+    private static final long MIN_DIVISION_VALUE = 2;
 
     @Override
     public MathTasks buildAdditionTasks(MathTaskInstructions mathTaskInstructions){
@@ -57,21 +59,55 @@ public class MainTaskGenerator implements MathTasksGenerator {
 
     @Override
     public MathTasks buildTask(MathTaskInstructions instructions) {
-        return switch (instructions.getMathOperationType()) {
-            case ADDITION -> buildAdditionTasks(instructions);
-            case SUBTRACTION ->
-                    buildSubtractionTasks(instructions.getNumberOfTasks(), instructions.getMaxFirstValue(), instructions.getMaxSecondValue());
-            case MULTIPLICATION ->
-                    buildMultiplicationTasks(
-                            instructions.getNumberOfTasks(),
-                            instructions.getMaxFirstValue(),
-                            instructions.getMaxSecondValue(),
-                            instructions.getMaxLimit());
-            default -> {
-                log.error("Not implemented yet");
-                throw new IllegalArgumentException("Not implemented yet");
-            }
-        };
+        try {
+            return switch (instructions.getMathOperationType()) {
+                case ADDITION -> buildAdditionTasks(instructions);
+                case SUBTRACTION ->
+                        buildSubtractionTasks(instructions.getNumberOfTasks(), instructions.getMaxFirstValue(), instructions.getMaxSecondValue());
+                case MULTIPLICATION ->
+                        buildMultiplicationTasks(
+                                instructions.getNumberOfTasks(),
+                                instructions.getMaxFirstValue(),
+                                instructions.getMaxSecondValue(),
+                                instructions.getMaxLimit());
+                case DIVISION -> buildDivisionTasks(
+                        instructions.getNumberOfTasks(),
+                        instructions.getMaxFirstValue(),
+                        instructions.getMaxSecondValue(),
+                        instructions.getMaxLimit()
+                );
+            };
+        } catch (IllegalArgumentException illegalArgumentException){
+            log.error("There was a problem with provided arguments. Some details: {}", illegalArgumentException.getLocalizedMessage());
+        }
+        return null;
+    }
+
+    private MathTasks buildDivisionTasks(int numberOfTasks, long maxFirstValue, long maxSecondValue, long maxResult) throws IllegalArgumentException{
+        if(maxSecondValue < MIN_DIVISION_VALUE){
+            String message = MessageFormat.format("First value -> {0} <- needs to be smaller than the max value -> {1} <-", MIN_DIVISION_VALUE, maxSecondValue);
+            throw new IllegalArgumentException(message);
+        }
+        List<MathTask> tasks = new ArrayList<>();
+        int counter = 0;
+        while(counter < maxResult){
+            long firstNumber = numberGenerator.getRandomNonPrimeLong(1,maxFirstValue);
+            long secondNumber = numberGenerator.getSecondDivision(firstNumber,2,maxSecondValue);
+            MathTask mathTask = MathTask.builder()
+                    .firstValue(firstNumber)
+                    .secondValue(secondNumber)
+                    .result(firstNumber / secondNumber)
+                    .operationType(MathOperationTypes.DIVISION)
+                    .build();
+            tasks.add(mathTask);
+            counter++;
+        }
+        return MathTasks.builder()
+                .mathTaskList(tasks)
+                .numberOfTasks(numberOfTasks)
+                .operationType(MathOperationTypes.DIVISION)
+                .maxResultValue(maxFirstValue)
+                .build();
     }
 
     private MathTasks buildMultiplicationTasks(int numberOfTasks,long maxFirstValue, long maxSecondValue, long maxResult){
@@ -89,7 +125,7 @@ public class MainTaskGenerator implements MathTasksGenerator {
                 .build();
     }
 
-    private MathTask buildMultiplication(long maxFirstValue, long maxSecondValue, long maxResult){
+   private MathTask buildMultiplication(long maxFirstValue, long maxSecondValue, long maxResult){
         long firstValue = numberGenerator.getRandomLong(1, maxFirstValue);
         long secondValue = numberGenerator.getRandomLong(1, maxSecondValue);
         if (firstValue * secondValue <= maxResult){

@@ -3,14 +3,11 @@ package cz.tomas.matikaapi.controller;
 import cz.tomas.matikaapi.dto.MathOperationTypes;
 import cz.tomas.matikaapi.dto.MathTaskInstructions;
 import cz.tomas.matikaapi.dto.MathTasks;
-import cz.tomas.matikaapi.dto.requests.SubtractionRequestBody;
+import cz.tomas.matikaapi.dto.requests.DivisionRequestBody;
 import cz.tomas.matikaapi.services.impl.MainTaskGenerator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,25 +15,21 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@Tag(
-        name = "Subtraction Math Assignment"
-)
-@Slf4j
-public class SubtractionInputController {
+public class DivisionInputController {
+
+    private final MainTaskGenerator mainTaskGenerator;
 
     @Autowired
-    public SubtractionInputController(MainTaskGenerator mainTaskGenerator) {
+    public DivisionInputController(MainTaskGenerator mainTaskGenerator) {
         this.mainTaskGenerator = mainTaskGenerator;
     }
 
-    MainTaskGenerator mainTaskGenerator;
-
     @PostMapping(
-            value = "/post/odcitani",
+            value = "/post/deleni",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @Operation(
-            summary = "Returns subtraction math assignments"
+            summary = "Returns division math assignments"
     )
     @ApiResponses(
             value = {
@@ -44,12 +37,11 @@ public class SubtractionInputController {
                     @ApiResponse(responseCode = "500", description = "Error has occurred during math tasks generation")
             }
     )
-    public MathTasks createSubtractions(
-            @RequestBody @Valid SubtractionRequestBody requestBody
-    ) {
-        log.info("Received request...");
+    public MathTasks createDivision(
+            @RequestBody DivisionRequestBody requestBody
+            ) {
         MathTaskInstructions mathTaskInstructions = MathTaskInstructions.builder()
-                .mathOperationType(MathOperationTypes.SUBTRACTION)
+                .mathOperationType(MathOperationTypes.DIVISION)
                 .numberOfTasks(requestBody.getTasks())
                 .maxFirstValue(requestBody.getFirstValue().getMaxValue())
                 .maxSecondValue(requestBody.getSecondValue().getMaxValue())
@@ -59,5 +51,4 @@ public class SubtractionInputController {
                 .build();
         return mainTaskGenerator.buildTask(mathTaskInstructions);
     }
-
 }
