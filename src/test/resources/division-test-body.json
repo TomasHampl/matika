@@ -1,0 +1,13 @@
+{
+  "taskType": "ADDITION",
+  "firstValue": {
+    "maxValue": 40,
+    "minValue": 2
+  },
+  "secondValue": {
+    "maxValue": 10,
+    "minValue": 1
+  },
+  "tasks": 20,
+  "maxResult": 0
+}
