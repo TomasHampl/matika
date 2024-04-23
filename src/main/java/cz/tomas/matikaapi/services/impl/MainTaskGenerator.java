@@ -92,7 +92,7 @@ public class MainTaskGenerator implements MathTasksGenerator {
         int counter = 0;
         while(counter < maxResult){
             long firstNumber = numberGenerator.getRandomNonPrimeLong(1,maxFirstValue);
-            long secondNumber = numberGenerator.getSecondDivision(firstNumber,2,maxSecondValue);
+            long secondNumber = numberGenerator.getSecondDivision(firstNumber, maxSecondValue);
             MathTask mathTask = MathTask.builder()
                     .firstValue(firstNumber)
                     .secondValue(secondNumber)

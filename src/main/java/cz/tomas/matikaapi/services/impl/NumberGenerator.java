@@ -4,8 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.security.SecureRandom;
-import java.util.OptionalLong;
-import java.util.Random;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -41,10 +40,41 @@ public class NumberGenerator {
      */
     public long getRandomNonPrimeLong(long min, long max){
         long interim = getRandomLong(min,max);
-        if(interim % 2 == 0){
+        if(isNotPrime(interim)){
             return interim;
         }
         return getRandomNonPrimeLong(min,max);
+    }
+
+    private boolean isNotPrime(long number){
+        if(number < 2){
+            return false;
+        }
+
+        for (int i = 2; i < number; i++) {
+            if(number % i == 0){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private List<Long> getPossibleDivisors(long number, long maxValue){
+        List<Long> longList = new ArrayList<>();
+
+        if(!isNotPrime(number)){
+            return longList;
+        }
+
+        for (int i = 2; i < number; i++) {
+            if (number % i == 0){
+                longList.add((long) i);
+            }
+            if (i >= maxValue) {
+                break;
+            }
+        }
+        return longList;
     }
 
     private Random getRandom(){
@@ -58,16 +88,16 @@ public class NumberGenerator {
      * Returns the random number, that meets the criteria that it is between the min & max number and that
      * the 'first number' (provided as parameter) is divisible by this randomly generated number without any remainder.
      * @param firstNumber is the first number that we try the 'divisible' test
-     * @param min is a min value of the random number
      * @param max is a max value of the random number
      * @return new long that should serve as number that you can use to divide the firstNumber with
      */
-    public long getSecondDivision(long firstNumber,long min, long max){
-        long interim = getRandomLong(min,max);
-        if(interim > 0 && interim < firstNumber && firstNumber % interim == 0){
-            return interim;
+    public long getSecondDivision(long firstNumber, long max){
+        List<Long> possibleDivisors = getPossibleDivisors(firstNumber, max);
+        if(possibleDivisors.isEmpty()){
+            throw new IllegalArgumentException("There are no elements to choose random divisor from...");
         }
-        return getSecondDivision(firstNumber,min,max);
+
+        return possibleDivisors.get((int) getRandom().nextLong(possibleDivisors.size()));
     }
 
 }
