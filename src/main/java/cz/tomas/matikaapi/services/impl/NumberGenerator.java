@@ -59,6 +59,14 @@ public class NumberGenerator {
         return false;
     }
 
+    /**
+     * Provides a list of possible 'divisors' - numbers that can divide the provided {@code number}. Uses {@code brute force}
+     * approach - goes through numbers that are greater than 1 but smaller than provided max value and tests if
+     * they're divisible without any remainder.
+     * @param number is the number that we want to find possible division values from
+     * @param maxValue is the max value we want to find
+     * @return a {@link List} of {@link Long}s that represents the group of numbers that meet the provided criteria
+     */
     private List<Long> getPossibleDivisors(long number, long maxValue){
         List<Long> longList = new ArrayList<>();
 
