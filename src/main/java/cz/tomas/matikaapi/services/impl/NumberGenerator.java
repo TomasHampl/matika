@@ -39,6 +39,9 @@ public class NumberGenerator {
      * @return a long that is a prime number
      */
     public long getRandomNonPrimeLong(long min, long max){
+        if(min < 3){
+            min = 3;
+        }
         long interim = getRandomLong(min,max);
         if(isNotPrime(interim)){
             return interim;
