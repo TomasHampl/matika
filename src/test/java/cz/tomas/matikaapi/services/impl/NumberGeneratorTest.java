@@ -34,4 +34,13 @@ class NumberGeneratorTest {
         long nonPrimeNumber = underTest.getRandomNonPrimeLong(1,100);
         assertEquals(0, nonPrimeNumber % 2);
     }
+
+    @Test
+    @DisplayName("Verifying division generation")
+    void getDivisions(){
+        long firstNumber = 12;
+        long maxNumber = 6;
+        long result = underTest.getSecondDivision(firstNumber, maxNumber);
+        assertTrue(result < 7 && result > 1);
+    }
 }
