@@ -61,7 +61,6 @@ public class MainTaskGenerator implements MathTasksGenerator {
     public MathTasks buildTask(MathTaskInstructions instructions) {
         try {
             return switch (instructions.getMathOperationType()) {
-                case ADDITION -> buildAdditionTasks(instructions);
                 case SUBTRACTION ->
                         buildSubtractionTasks(instructions.getNumberOfTasks(), instructions.getMaxFirstValue(), instructions.getMaxSecondValue());
                 case MULTIPLICATION ->
@@ -74,8 +73,8 @@ public class MainTaskGenerator implements MathTasksGenerator {
                         instructions.getNumberOfTasks(),
                         instructions.getMaxFirstValue(),
                         instructions.getMaxSecondValue(),
-                        instructions.getMaxLimit()
-                );
+                        instructions.getMaxLimit());
+                default -> buildAdditionTasks(instructions);
             };
         } catch (IllegalArgumentException illegalArgumentException){
             log.error("There was a problem with provided arguments. Some details: {}", illegalArgumentException.getLocalizedMessage());
