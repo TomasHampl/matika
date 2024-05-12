@@ -5,13 +5,13 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class MultiplicationRequestBodyTest {
+class MultiplicationInputRequestBodyTest {
 
-    MultiplicationRequestBody underTest;
+    InputRequestBody underTest;
 
     @BeforeEach
     void setUp() {
-        underTest = new MultiplicationRequestBody();
+        underTest = InputRequestBody.builder().build();
     }
 
     @Test
