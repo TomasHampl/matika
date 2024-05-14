@@ -1,5 +1,6 @@
 package cz.tomas.matikaapi.services.impl;
 
+import org.apache.commons.math3.primes.Primes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,7 +33,7 @@ class NumberGeneratorTest {
     @DisplayName("Get non-prime number")
     void getNonPrime(){
         long nonPrimeNumber = underTest.getRandomNonPrimeLong(1,100);
-        assertEquals(0, nonPrimeNumber % 2);
+        assertFalse(Primes.isPrime((int) nonPrimeNumber));
     }
 
     @Test
