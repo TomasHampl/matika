@@ -6,8 +6,12 @@ import cz.tomas.matikaapi.dto.requests.VerificationRequestBody;
 import cz.tomas.matikaapi.services.ResultChecker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,6 +22,33 @@ class ResultCheckerImplTest {
     @BeforeEach
     void setUp() {
         underTest = new ResultCheckerImpl();
+    }
+
+    @DisplayName("Multiple verification requests")
+    @Test
+    void multipleVerifications(){
+        VerificationRequestBody firstVerification = VerificationRequestBody.builder()
+                .result(30)
+                .firstNumber(10)
+                .secondNumber(20)
+                .operationTypes(MathOperationTypes.ADDITION)
+                .build();
+
+        VerificationRequestBody secondVerification = VerificationRequestBody.builder()
+                .result(5)
+                .firstNumber(10)
+                .secondNumber(5)
+                .operationTypes(MathOperationTypes.SUBTRACTION)
+                .build();
+        List<VerificationRequestBody> verificationRequestBodyList = new ArrayList<>();
+        verificationRequestBodyList.add(firstVerification);
+        verificationRequestBodyList.add(secondVerification);
+
+        List<VerificationResponse> verificationResponses = underTest.validateResults(verificationRequestBodyList);
+        assertEquals(2, verificationResponses.size());
+        for (VerificationResponse verificationResponse : verificationResponses){
+            assertTrue(verificationResponse.isCorrect());
+        }
     }
 
     @DisplayName("Addition")

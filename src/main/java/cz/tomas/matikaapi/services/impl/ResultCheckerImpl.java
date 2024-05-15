@@ -7,6 +7,7 @@ import cz.tomas.matikaapi.dto.requests.VerificationRequestBody;
 import cz.tomas.matikaapi.services.ResultChecker;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -26,7 +27,24 @@ public class ResultCheckerImpl implements ResultChecker {
 
     @Override
     public List<VerificationResponse> validateResults(List<VerificationRequestBody> requestBodies) {
-        return List.of();
+        List<VerificationResponse> verificationResponses = new ArrayList<>();
+        for (VerificationRequestBody verificationRequestBody : requestBodies){
+            ResultAssessment resultAssessment = verifyResult(verificationRequestBody);
+            VerificationResponse verificationResponse = VerificationResponse.builder()
+                    .correct(resultAssessment.isCorrect())
+                    .requestBody(verificationRequestBody)
+                    .correctResult(resultAssessment.getCorrectResult())
+                    .build();
+            verificationResponses.add(verificationResponse);
+        }
+        return verificationResponses;
+    }
+
+    private ResultAssessment verifyResult(VerificationRequestBody verificationRequestBody){
+        return verifyResult(verificationRequestBody.getFirstNumber(),
+                verificationRequestBody.getSecondNumber(),
+                verificationRequestBody.getOperationTypes(),
+                verificationRequestBody.getResult());
     }
 
     private ResultAssessment verifyResult(long firstNumber, long secondNumber, MathOperationTypes operation, long result){
