@@ -12,5 +12,6 @@ public class MatikaAPIConstants {
     public static final String SUBTRACTION_POST_PATH = POST_PREFIX + PATH_SEPARATOR + "odcitani";
     public static final String DIVISION_POST_PATH = POST_PREFIX + PATH_SEPARATOR + "deleni";
     public static final String MULTIPLICATION_POST_PATH = POST_PREFIX + PATH_SEPARATOR + "nasobeni";
+    public static final String TASKS_TYPES_PATH = POST_PREFIX + PATH_SEPARATOR + "types";
 
 }

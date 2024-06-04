@@ -11,6 +11,18 @@ spring:
 management:
     tracing:
         enabled: true
+    endpoints:
+        web:
+            exposure:
+                include: "*"
+        discovery:
+            enabled: true
 springdoc:
     swagger-ui:
         path: /help.html
+
+matika:
+    availableTypes:
+        - "ADDITION"
+        - "MULTIPLICATION"
+

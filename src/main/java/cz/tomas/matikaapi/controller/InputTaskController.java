@@ -1,5 +1,7 @@
 package cz.tomas.matikaapi.controller;
 
+import cz.tomas.matikaapi.configuration.AppConfiguration;
+import cz.tomas.matikaapi.dto.AvailableMathTaskTypes;
 import cz.tomas.matikaapi.dto.MathOperationTypes;
 import cz.tomas.matikaapi.dto.MathTaskInstructions;
 import cz.tomas.matikaapi.dto.MathTasks;
@@ -14,6 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,9 +29,32 @@ import org.springframework.web.bind.annotation.RestController;
 public class InputTaskController {
 
     private final MainTaskGenerator mainTaskGenerator;
+    private final AppConfiguration appConfiguration;
 
-    public InputTaskController(MainTaskGenerator mainTaskGenerator) {
+    public InputTaskController(MainTaskGenerator mainTaskGenerator, AppConfiguration appConfiguration) {
         this.mainTaskGenerator = mainTaskGenerator;
+        this.appConfiguration = appConfiguration;
+    }
+
+    @GetMapping(
+            value = MatikaAPIConstants.TASKS_TYPES_PATH,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @Operation(
+            summary = "Returns types of available math tasks",
+            description = "Provides the available types of math tasks that the tool is able to produce"
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Information provided"),
+                    @ApiResponse(responseCode = "500", description = "Internal error has occurred")
+            }
+    )
+    public AvailableMathTaskTypes getAvailableMathTaskTypes(){
+        return AvailableMathTaskTypes
+                .builder()
+                .types(appConfiguration.getAvailableTaskTypes())
+                .build();
     }
 
     @PostMapping(
@@ -36,7 +62,8 @@ public class InputTaskController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @Operation(
-            summary = "Returns addition math assignments"
+            summary = "Returns addition math assignments",
+            description = "Addition assumes two numbers, that, when added together, do not exceed the maxLimit"
     )
     @ApiResponses(
             value = {
@@ -64,7 +91,9 @@ public class InputTaskController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @Operation(
-            summary = "Returns division math assignments"
+            summary = "Returns division math assignments",
+            description = "Dividing numbers into the identical parts - based on the provided values where calling code" +
+                    "may specify the min & max for both the first & second number."
     )
     @ApiResponses(
             value = {

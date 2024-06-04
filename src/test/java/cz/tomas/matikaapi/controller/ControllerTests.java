@@ -1,6 +1,7 @@
 package cz.tomas.matikaapi.controller;
 
 import cz.tomas.matikaapi.TestUtil;
+import cz.tomas.matikaapi.configuration.AppConfiguration;
 import cz.tomas.matikaapi.dto.constants.MatikaAPIConstants;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -22,6 +23,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
     @Autowired
     MockMvc mockMvc;
+
+    @Autowired
+    AppConfiguration appConfiguration;
 
     @Test
     void additionApiEndpointNotFound() throws Exception {
@@ -89,5 +93,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(fileContents))
                 .andExpect(status().is2xxSuccessful());
+    }
+
+    @Test
+    void testMathTaskTypes() throws Exception {
+        mockMvc.perform(get(MatikaAPIConstants.TASKS_TYPES_PATH))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(header().exists("content-type"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+
     }
 }

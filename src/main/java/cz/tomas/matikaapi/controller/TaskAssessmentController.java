@@ -3,6 +3,7 @@ package cz.tomas.matikaapi.controller;
 import cz.tomas.matikaapi.dto.VerificationResponse;
 import cz.tomas.matikaapi.dto.requests.VerificationRequestBody;
 import cz.tomas.matikaapi.services.ResultChecker;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
@@ -20,11 +21,12 @@ public class TaskAssessmentController {
         this.resultChecker = resultChecker;
     }
 
-    @PostMapping(value = "/task/check",produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(
+            summary = "Verifies the provided results",
+            description = "Returns the json representation of the verification of math task")
+    @PostMapping(value = "/tasks/check",produces = MediaType.APPLICATION_JSON_VALUE)
     public VerificationResponse validateResult(@RequestBody @Valid VerificationRequestBody verificationRequestBody) {
         return resultChecker.validateResult(verificationRequestBody);
     }
-
-
 
 }
